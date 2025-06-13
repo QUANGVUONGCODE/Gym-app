@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getToken } from "@/utils/user";
 
 const CategoryList2 = () => {
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string; image_url: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [keyword, setKeyword] = useState<string>("");
@@ -42,9 +42,10 @@ const CategoryList2 = () => {
       console.log("Categories API Response Data:", data);
 
       if (data.code === 0 && data.result && Array.isArray(data.result.categories)) {
-        const newCategories = data.result.categories.map((category: { id: number; name: string }) => ({
+        const newCategories = data.result.categories.map((category: { id: number; name: string; image_url: string }) => ({
           id: category.id,
           name: category.name,
+          image_url: category.image_url,
         }));
 
         // Nếu là load more, nối dữ liệu mới vào danh sách hiện tại; nếu không, thay thế
@@ -142,8 +143,13 @@ const CategoryList2 = () => {
             >
               <Avatar
                 className="mb-2"
-                size={120}
-                src="src/assets/yoga.png" // Hình ảnh mặc định
+                size={61}
+                // Giữ một hình ảnh mặc định cho tất cả các danh mục
+                src={
+                  category.image_url && category.image_url !== "null" && category.image_url !== ""
+                    ? category.image_url
+                    : "https://via.placeholder.com/300x200?text=No+Image"
+                }
               />
               <Text className="font-semibold text-[20px]">{category.name}</Text>
             </Box>

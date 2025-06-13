@@ -5,7 +5,7 @@ import { getToken } from "@/utils/user";
 
 
 const CategoryList = () => {
-  const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: number; name: string; image_url: string }[]>([]);
   const { goToCategories, goToExerciseByCategoryId } = useAppNavigation();
   const fetchCategories = async () => {
     try {
@@ -28,9 +28,10 @@ const CategoryList = () => {
       const data = await response.json();
       console.log(data); // Xem dữ liệu trả về từ API
       if (data.code === 0 && data.result) {
-        setCategories(data.result.categories.map((category: { id: number; name: string }) => ({
+        setCategories(data.result.categories.map((category: { id: number; name: string; image_url: string }) => ({
           id: category.id,
           name: category.name,
+          image_url: category.image_url 
         })));
       } else {
         setCategories([]);
@@ -64,7 +65,11 @@ const CategoryList = () => {
                 className="mb-2"
                 size={61}
                 // Giữ một hình ảnh mặc định cho tất cả các danh mục
-                src={"src/assets/yoga.png"}
+                src={
+                  category.image_url && category.image_url !== "null" && category.image_url !== ""
+                    ? category.image_url
+                    : "https://via.placeholder.com/300x200?text=No+Image"
+                }
               />
               <Text className="font-semibold text-[14px]">{category.name}</Text>
             </Box>

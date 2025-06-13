@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, Button } from "zmp-ui";
 import { useAppNavigation } from "@/utils/navigation";
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle, faHourglassHalf } from '@fortawesome/free-solid-svg-icons';
 import Footer from "./footer/footer";
@@ -75,8 +75,8 @@ const MyFavorites = () => {
             number: date.getDate(),
         };
     });
-    
-    
+
+
 
     // Hàm gọi API để lấy dữ liệu dinh dưỡng (Meal)
     const fetchNutritionData = async (date: string) => {
@@ -124,7 +124,7 @@ const MyFavorites = () => {
                     'Origin': 'http://localhost:3000',
                 },
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -143,6 +143,39 @@ const MyFavorites = () => {
         }
     };
 
+    const deleteMeal = async (id: number) => {
+        try {
+            const response = await fetch(`http://localhost:8080/gym/api/v1/nutrition/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (response.ok) {
+                setNutritionData(prev => prev.filter(item => item.id !== id));
+            }
+        } catch (err) {
+            alert("Failed to delete meal.");
+        }
+    };
+
+    const deleteWorkout = async (id: number) => {
+        const plan = workoutPlans.find(p => p.id === id);
+        if (!plan || plan.active) {
+            alert("This workout has already been completed and cannot be deleted.");
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:8080/gym/api/v1/workout-plans/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (response.ok) {
+                setWorkoutPlans(prev => prev.filter(p => p.id !== id));
+            }
+        } catch (err) {
+            alert("Failed to delete workout plan.");
+        }
+    };
+
     // Gọi API khi component mount hoặc ngày thay đổi
     useEffect(() => {
         fetchNutritionData(selectedDate);
@@ -155,6 +188,8 @@ const MyFavorites = () => {
         newDate.setDate(newDate.getDate() + offset);
         setSelectedDate(newDate.toISOString().split("T")[0]);
     };
+
+
 
     return (
         <>
@@ -281,6 +316,24 @@ const MyFavorites = () => {
                                                 30 min {/* Giả định thời gian chuẩn bị */}
                                             </Text>
                                         </Box>
+                                        <Box className="flex items-center">
+                                            <i className="fa fa-fire text-green-400 pl-1"></i>
+                                            <Text className="text-sm text-gray-600 ml-2">
+                                                {entry.mealType}
+                                            </Text>
+                                        </Box>
+                                        <Box className="flex items-center ml-4">
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                                                    deleteMeal(entry.id);
+                                                }}
+                                                className="ml-28 text-red-500 hover:text-red-600 focus:outline-none"
+                                            >
+                                                <FontAwesomeIcon icon={faTrash} className="text-[20px] cursor-pointer" />
+                                            </button>
+                                        </Box>
                                     </Box>
                                 </Box>
                             </Box>
@@ -303,17 +356,16 @@ const MyFavorites = () => {
                                     className="w-full h-56 object-cover rounded-lg"
                                 />
                                 <Box className="mt-4">
-                                    <Text className="font-semibold text-lg">{plan.exercise.name}</Text>
-                                    <Box className="flex items-center mt-2">
-                                        <Text className="text-sm text-gray-600">{plan.exercise.level}</Text>
-                                        <Box className="flex items-center ml-4">
-                                            <FontAwesomeIcon
-                                                icon={plan.active ? faCheckCircle : faHourglassHalf}
-                                                className={plan.active ? 'text-green-400 pl-2 border-l border-gray-600' : 'text-yellow-400 pl-2 border-l border-gray-600'}
-                                            />
-                                            <Text className="text-sm text-gray-600 ml-2">
-                                                {plan.exercise.time || "N/A"}
-                                            </Text>
+                                    <Box className="mt-4">
+                                        <Text className="font-semibold text-lg">{plan.exercise.name}</Text>
+                                        <Box className="flex items-center justify-between mt-2">
+                                            <Text className="text-sm text-gray-600">{plan.exercise.level} • {plan.exercise.time}</Text>
+                                            {!plan.active && (
+                                                <FontAwesomeIcon icon={faTrash} className="text-red-500 cursor-pointer" onClick={() => deleteWorkout(plan.id)} />
+                                            )}
+                                            {plan.active && (
+                                                <FontAwesomeIcon icon={faCheckCircle} className="text-green-500" />
+                                            )}
                                         </Box>
                                     </Box>
                                 </Box>

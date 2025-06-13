@@ -131,22 +131,6 @@ const CreateAccountPage = () => {
                         {loading ? "Creating Account..." : "CREATE ACCOUNT"}
                     </Button>
                 </Box>
-
-                {/* Social Media Login Buttons */}
-                <Box className="flex justify-center space-x-4 mb-4">
-                    <Button className="flex-1 p-3 bg-white border border-gray-300 rounded-lg flex items-center justify-center text-black">
-                        <FontAwesomeIcon icon={faGoogle} className="w-5 h-5 mr-2" />
-                        Connect with Google
-                    </Button>
-                </Box>
-
-                <Box className="flex justify-center space-x-4 mb-6">
-                    <Button className="flex-1 p-3 bg-blue-600 text-white rounded-lg flex items-center justify-center">
-                        <FontAwesomeIcon icon={faFacebook} className="w-5 h-5 mr-2 " />
-                        Connect with Facebook
-                    </Button>
-                </Box>
-
                 {/* Error Message */}
                 {error && (
                     <Box className="text-red-500 text-center mt-4">

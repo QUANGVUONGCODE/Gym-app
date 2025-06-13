@@ -24,7 +24,7 @@ const TranningPage: React.FC = () => {
                                 </div>
             
                                 {/* Tiêu đề Categories */}
-                                <Text className="text-[24px] font-bold mr-24">Categories</Text>
+                                <Text className="text-[24px] font-bold mr-28">Exercises</Text>
                             </Box>
                         </Box>
             {/* popular training */}

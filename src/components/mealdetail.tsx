@@ -16,7 +16,7 @@ interface Meal {
   carbs: number;
   protein: number;
   description?: string;
-  image?: string;
+  image_url?: string;
 }
 
 const MealPlanDetail1 = () => {
@@ -286,7 +286,7 @@ const MealPlanDetail1 = () => {
           <Box
             className="h-[380px]"
             style={{
-              backgroundImage: `url(${mealDetail.image || "https://i.pinimg.com/736x/11/e9/22/11e9223f98b0bec9e851097a5a224b19.jpg"})`,
+              backgroundImage: `url(${mealDetail.image_url || "https://i.pinimg.com/736x/11/e9/22/11e9223f98b0bec9e851097a5a224b19.jpg"})`,
               backgroundSize: "cover",
             }}
           >

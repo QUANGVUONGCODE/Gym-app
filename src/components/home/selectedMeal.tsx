@@ -13,18 +13,18 @@ const SelectMeal = () => {
 
     try {
       const token = getToken();
-                  if (!token) {
-                      throw new Error('No authentication token found. Please log in.');
-                  }
-                  const response = await fetch("http://localhost:8080/gym/api/v1/meals?keyword&page=0&limit=2", {
-                      method: 'GET',
-                      headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`,
-                          'Accept-Language': 'vi',
-                          'Origin': 'http://localhost:3000',
-                      },
-                  });
+      if (!token) {
+        throw new Error('No authentication token found. Please log in.');
+      }
+      const response = await fetch("http://localhost:8080/gym/api/v1/meals?keyword&page=0&limit=2", {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Accept-Language': 'vi',
+          'Origin': 'http://localhost:3000',
+        },
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -78,7 +78,11 @@ const SelectMeal = () => {
             <Box className="w-full h-56">
               {/* Hiển thị ảnh bữa ăn */}
               <img
-                src={"src/assets/meal-1.png"} // Sử dụng ảnh từ API hoặc ảnh mặc định
+                src={
+                  meal.image_url && meal.image_url !== "null" && meal.image_url !== ""
+                    ? meal.image_url
+                    : "https://via.placeholder.com/300x200?text=No+Image"
+                } // Sử dụng ảnh từ API hoặc ảnh mặc định
                 alt={meal.name}
                 className="w-full h-full object-cover rounded-lg"
               />

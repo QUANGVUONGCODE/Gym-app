@@ -102,7 +102,7 @@ const ExerciseDetail1 = () => {
         const formattedDate = selectedDate.format("YYYY-MM-DD"); // Format the date for the API
 
         const payload = {
-            user_id: getUserId(), 
+            user_id: getUserId(),
             exercise_id: exerciseDetail.id,
             date: formattedDate,
             duration: duration,
@@ -152,6 +152,11 @@ const ExerciseDetail1 = () => {
         setDuration(20); // Reset the duration
     };
 
+    const backgroundImageUrl =
+        exerciseDetail?.image_url && exerciseDetail.image_url !== "null" && exerciseDetail.image_url !== ""
+            ? exerciseDetail.image_url
+            : "/src/assets/exercise-1.png";
+
     return (
         <>
             {loading && <Text>Loading...</Text>}
@@ -161,7 +166,7 @@ const ExerciseDetail1 = () => {
                     <Box
                         className="h-[380px]"
                         style={{
-                            backgroundImage: `url("/src/assets/exercise-1.png")`,
+                            backgroundImage: `url(${backgroundImageUrl})`,
                             backgroundSize: "cover",
                         }}
                     >

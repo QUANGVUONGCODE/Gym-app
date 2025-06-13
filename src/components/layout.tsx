@@ -21,6 +21,7 @@ import Dashboard from "@/pages/dashboard";
 import TrainScreen from "./train";
 import ResultScreen from "./result";
 import ExerciseByCategories from "@/pages/exercisebycategories";
+import AdminDashBoard from "@/pages/admin/adminDashboard";
 
 
 const Layout = () => {
@@ -47,6 +48,7 @@ const Layout = () => {
       <Route path="/train/:id" element={<TrainScreen />}></Route>
       <Route path="/result/:id" element={<ResultScreen />}></Route>
       <Route path="/categories/:id" element={<ExerciseByCategories />}></Route>
+      <Route path = "/admin" element = {<AdminDashBoard/>}></Route>
     </AnimationRoutes>
   );
 };

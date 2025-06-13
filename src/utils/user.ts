@@ -159,3 +159,24 @@ export const removeUserResponseFromLocalStorage = (): void => {
         console.error('Error removing user response from localStorage:', error);
     }
 };
+
+// Function to decode JWT token and extract the role
+export const getUserRole = (): string | null => {
+    try {
+        const token = getTokenFromLocalStorage();
+        if (!token) return null;
+
+        // JWT token is in the format: header.payload.signature
+        const payloadBase64 = token.split('.')[1];
+        if (!payloadBase64) return null;
+
+        // Decode the Base64 payload
+        const payload = JSON.parse(atob(payloadBase64));
+
+        // Extract the role from the 'scope' field
+        return payload.scope || null;
+    } catch (error) {
+        console.error('Error decoding token to get user role:', error);
+        return null;
+    }
+};

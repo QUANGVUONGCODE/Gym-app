@@ -8,7 +8,7 @@ import { getToken } from "@/utils/user";
 
 function Exercise4() {
     const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
-    const [exercises, setExercises] = useState<{ id: number; name: string; video_url: string; time: string; calories: string; level: string }[]>([]);
+    const [exercises, setExercises] = useState<{ id: number; name: string; video_url: string; time: string; calories: string; level: string; image_url: string }[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [keyword, setKeyword] = useState<string>(""); // Từ khóa tìm kiếm
@@ -57,20 +57,20 @@ function Exercise4() {
     // Hàm gọi API để lấy bài tập theo từ khóa và danh mục
     const fetchExercises = async () => {
         if (loading) return; // Nếu đang loading thì không gọi API nữa
-    
+
         setLoading(true);
         setError(null);
         try {
             if (!token) {
                 throw new Error("No authentication token found. Please log in.");
             }
-    
+
             let url = `http://localhost:8080/gym/api/v1/exercises?keyword=${keyword}&page=${page}&limit=5`; // Limit 5 bài tập mỗi lần
-    
+
             if (categoryId) {
                 url = `http://localhost:8080/gym/api/v1/exercises?keyword=${keyword}&category_id=${categoryId}&page=${page}&limit=5`;
             }
-    
+
             const response = await fetch(url, {
                 method: "GET",
                 headers: {
@@ -80,27 +80,28 @@ function Exercise4() {
                     "Origin": "http://localhost:3000",
                 },
             });
-    
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-    
+
             const data = await response.json();
-    
+
             if (data.code === 0 && data.result) {
                 // Nếu có bài tập mới, thêm vào danh sách
                 setExercises(prevExercises => [
                     ...prevExercises,
-                    ...data.result.exercises.map((exercise: { id: number; name: string; video_url: string; time: string; calories: string; level: string }) => ({
+                    ...data.result.exercises.map((exercise: { id: number; name: string; video_url: string; time: string; calories: string; level: string, image_url: string }) => ({
                         id: exercise.id,
                         name: exercise.name,
                         video_url: exercise.video_url,
                         time: exercise.time,
                         calories: exercise.calories,
                         level: exercise.level,
+                        image_url: exercise.image_url
                     })),
                 ]);
-    
+
                 // Kiểm tra xem còn bài tập để tải hay không
                 setHasMore(data.result.exercises.length === 5);
             } else {
@@ -114,7 +115,7 @@ function Exercise4() {
             setLoading(false);
         }
     };
-    
+
 
     // Hàm thay đổi từ khóa tìm kiếm
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -212,33 +213,38 @@ function Exercise4() {
                     <Text className="text-red-500">{error}</Text>
                 ) : exercises.length > 0 ? (
                     exercises.map((exercise, index) => (
-                      <Box
-                        key={`${exercise.id}-${index}`} // Ensuring uniqueness by combining id and index
-                        className="grid grid-cols-3 gap-3 border-b-2 border-gray-300 pb-4 mb-4"
-                        onClick={() => handleExerciseClick(exercise.id)}
-                      >
-                        <Box>
-                          <img
-                            className="w-full"
-                            src={"src/assets/exercise-1.png"} // Ảnh mặc định
-                            alt={exercise.name}
-                          />
+                        <Box
+                            key={`${exercise.id}-${index}`} // Ensuring uniqueness by combining id and index
+                            className="grid grid-cols-3 gap-3 border-b-2 border-gray-300 pb-4 mb-4"
+                            onClick={() => handleExerciseClick(exercise.id)}
+                        >
+                            <Box>
+                                <img
+                                    className="w-full h-auto max-w-[150px] max-h-[100px] border-2"
+                                    src={
+                                        exercise.image_url && exercise.image_url !== "null" && exercise.image_url !== ""
+                                            ? exercise.image_url
+                                            : "https://via.placeholder.com/300x200?text=No+Image"
+                                    }
+                                    alt={exercise.name}
+
+                                />
+                            </Box>
+                            <Box className="col-span-2">
+                                <Text className="font-semibold text-[16px]">{exercise.name}</Text>
+                                <Box className="flex items-center">
+                                    <i className="fa fa-fire text-green-400 "></i>
+                                    <Text className="text-sm text-gray-600 m-2">{exercise.calories} kcal</Text>
+                                    <i className="fa fa-clock text-green-400 pl-2 border-l border-gray-600"></i>
+                                    <Text className="text-sm text-gray-600 ml-2">{exercise.time}</Text>
+                                </Box>
+                                <Text className="text-sm text-gray-600">{exercise.level}</Text>
+                            </Box>
                         </Box>
-                        <Box className="col-span-2">
-                          <Text className="font-semibold text-[16px]">{exercise.name}</Text>
-                          <Box className="flex items-center">
-                            <i className="fa fa-fire text-green-400 "></i>
-                            <Text className="text-sm text-gray-600 m-2">{exercise.calories} kcal</Text>
-                            <i className="fa fa-clock text-green-400 pl-2 border-l border-gray-600"></i>
-                            <Text className="text-sm text-gray-600 ml-2">{exercise.time}</Text>
-                          </Box>
-                          <Text className="text-sm text-gray-600">{exercise.level}</Text>
-                        </Box>
-                      </Box>
                     ))
-                  ) : (
+                ) : (
                     <Text>No exercises available</Text>
-                  )}                  
+                )}
             </Box>
 
             {hasMore && !loading && (

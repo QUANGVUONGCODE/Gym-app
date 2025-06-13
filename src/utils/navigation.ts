@@ -27,5 +27,6 @@ export const useAppNavigation = () => {
     goToTrainPage: (id: number) => navigate(`/train/${id}`),
     goToResult: (id: number, state?: any) => navigate(`/result/${id}`, { state }),
     goToExerciseByCategoryId: (id: number) => navigate(`/categories/${id}`),
+    goToAdminDashboard: () => navigate("/admin"),
   };
 };

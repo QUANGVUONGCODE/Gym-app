@@ -13,6 +13,7 @@ interface Meal {
     fat: number;
     carbs: number;
     protein: number;
+    image_url: string;
 }
 
 const MealPlan = () => {
@@ -121,9 +122,13 @@ const MealPlan = () => {
                                     onClick={() => handleExerciseClick(meal.id)}
                                 >
                                     <img
-                                        src={"/src/assets/meal-1.png"}
-                                        alt={meal.name || "Meal"}
-                                        className="w-full h-56 object-cover rounded-lg"
+                                        src={
+                                            meal.image_url && meal.image_url !== "null" && meal.image_url !== ""
+                                                ? meal.image_url
+                                                : "https://via.placeholder.com/300x200?text=No+Image"
+                                        } // Sử dụng ảnh từ API hoặc ảnh mặc định
+                                        alt={meal.name}
+                                        className="w-full h-full object-cover rounded-lg"
                                     />
                                     <Box className="mt-4 border-b-2 border-gray-300 pb-4">
                                         <Text className="font-semibold text-lg">

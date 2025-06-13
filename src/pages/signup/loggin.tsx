@@ -1,13 +1,12 @@
-// src/pages/LoginPage.tsx
 import { Box, Button, Text, Input } from "zmp-ui";
 import { useAppNavigation } from "@/utils/navigation";
 import { faFacebook, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import { login, logout, isAuthenticated, getUserResponseFromLocalStorage } from "@/utils/user";
+import { login, logout, isAuthenticated, getUserResponseFromLocalStorage, getUserRole } from "@/utils/user";
 
 const LoginPage = () => {
-  const { goToRegister, goToIndex } = useAppNavigation();
+  const { goToRegister, goToIndex, goToAdminDashboard } = useAppNavigation(); // Add goToAdminDashboard
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +21,16 @@ const LoginPage = () => {
       if (response.code === 0 && response.result.authenticated) {
         const userResponse = getUserResponseFromLocalStorage();
         console.log('User info saved to localStorage:', userResponse);
-        goToIndex(); // Redirect to home page
+
+        // Check the user's role
+        const userRole = getUserRole();
+        console.log('User role:', userRole);
+
+        if (userRole === "ROLE_ADMIN") {
+          goToAdminDashboard(); // Redirect to admin dashboard if role is ROLE_ADMIN
+        } else {
+          goToIndex(); // Redirect to home page for non-admin users
+        }
       } else {
         setError("Invalid credentials. Please try again.");
       }
@@ -107,25 +115,7 @@ const LoginPage = () => {
               </Button>
             </Box>
 
-            <Box className="flex items-center justify-center my-4">
-              <Text>Or Login With</Text>
-            </Box>
-
-            {/* Social login buttons */}
-            <Box className="flex justify-center space-x-4 mb-4">
-              <Button className="flex-1 p-3 bg-white border border-gray-300 rounded-lg flex items-center justify-center text-black">
-                <FontAwesomeIcon icon={faGoogle} className="w-5 h-5 mr-2" />
-                Connect with Google
-              </Button>
-            </Box>
-
-            <Box className="flex justify-center space-x-4 mb-6">
-              <Button className="flex-1 p-3 bg-blue-600 text-white rounded-lg flex items-center justify-center">
-                <FontAwesomeIcon icon={faFacebook} className="w-5 h-5 mr-2" />
-                Connect with Facebook
-              </Button>
-            </Box>
-
+            
             {/* Register link */}
             <Box className="text-center">
               <Text className="text-sm text-gray-600">
